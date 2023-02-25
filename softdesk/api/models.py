@@ -40,13 +40,17 @@ class Project(models.Model):
     title = models.CharField(max_length=50)
     description = models.TextField(max_length=8192, blank=True)
     type = models.CharField(max_length=50, choices=TYPE)
-    user = models.ManyToManyField(User, through="Contributor")
+    contributors = models.ManyToManyField(User, through="Contributor")
 
 class Contributor(models.Model):
     user =  models.ForeignKey(User, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     permission = models.CharField(max_length=50, choices=PERMISSION, default="read")
     role = models.CharField(max_length=50, choices=ROLE, default="contributor")
+
+    class Meta:
+        unique_together = ['user', 'project']
+
 
 class Issue(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -56,7 +60,7 @@ class Issue(models.Model):
     priority = models.CharField(max_length=50, choices=PRIORITY)
     status = models.CharField(max_length=50, choices=STATUS)
     author_user = models.ForeignKey(User, related_name="issue_author", on_delete=models.CASCADE)
-    assigned_user = models.ForeignKey(User, related_name="issue_assigned", on_delete=models.CASCADE)
+    assigned_user = models.ForeignKey(User, related_name="issue_assigned",default=author_user, on_delete=models.CASCADE)
     created_time = models.DateTimeField(auto_now_add=True)
 
 class Comment(models.Model):
