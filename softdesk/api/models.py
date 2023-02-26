@@ -51,7 +51,6 @@ class Contributor(models.Model):
     class Meta:
         unique_together = ['user', 'project']
 
-
 class Issue(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)

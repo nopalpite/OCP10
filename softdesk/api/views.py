@@ -1,13 +1,21 @@
 from django.contrib.auth.models import User
+from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.viewsets import ModelViewSet
 from .serializer import UserSerializer, ContributorSerializer, ProjectSerializer, IssueSerializer, CommentSerializer
 from .models import Project, Contributor, Issue, Comment
-from rest_framework.viewsets import ModelViewSet
+
+
+class SignupView(CreateAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]    
 
 class ProjectViewSet(ModelViewSet):
     serializer_class = ProjectSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        print(self.request.user)
         return Project.objects.filter(contributors__id=self.request.user.id)
         
     def perform_create(self, serializer):
@@ -22,7 +30,7 @@ class ProjectViewSet(ModelViewSet):
 
 class ContributorViewSet(ModelViewSet):
     serializer_class = ContributorSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         project = Project.objects.get(pk=self.kwargs['projects_pk'])
@@ -31,13 +39,11 @@ class ContributorViewSet(ModelViewSet):
     def perform_create(self, serializer):
         project = Project.objects.get(pk=self.kwargs['projects_pk'])
         contributor = serializer.save(project=project)
-        
 
-    
 
 class IssueViewSet(ModelViewSet):
     serializer_class = IssueSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         project = Project.objects.get(pk=self.kwargs['projects_pk'])
@@ -49,7 +55,7 @@ class IssueViewSet(ModelViewSet):
 
 class CommentViewSet(ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         issue = Issue.objects.get(pk=self.kwargs['issues_pk'])
@@ -59,7 +65,7 @@ class CommentViewSet(ModelViewSet):
         issue = Issue.objects.get(pk=self.kwargs['issues_pk'])
         serializer.save(issue=issue, author_user=self.request.user)
 
-        
+
 
 
         
