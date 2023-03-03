@@ -64,11 +64,3 @@ class CommentViewSet(ModelViewSet):
     def perform_create(self, serializer):
         issue = Issue.objects.get(pk=self.kwargs['issues_pk'])
         serializer.save(issue=issue, author_user=self.request.user)
-
-
-
-
-        
-
-    
-
