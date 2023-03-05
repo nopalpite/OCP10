@@ -4,6 +4,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from .serializer import UserSerializer, ContributorSerializer, ProjectSerializer, IssueSerializer, CommentSerializer
 from .models import Project, Contributor, Issue, Comment
+from .permissions import IsProjectAuthorOrReadOnly, IsContributorAuthorOrReadOnly, IsAuthorOrReadOnly
 
 
 class SignupView(CreateAPIView):
@@ -12,10 +13,9 @@ class SignupView(CreateAPIView):
 
 class ProjectViewSet(ModelViewSet):
     serializer_class = ProjectSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsProjectAuthorOrReadOnly]
 
     def get_queryset(self):
-        print(self.request.user)
         return Project.objects.filter(contributors__id=self.request.user.id)
         
     def perform_create(self, serializer):
@@ -30,7 +30,7 @@ class ProjectViewSet(ModelViewSet):
 
 class ContributorViewSet(ModelViewSet):
     serializer_class = ContributorSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsContributorAuthorOrReadOnly]
 
     def get_queryset(self):
         project = Project.objects.get(pk=self.kwargs['projects_pk'])
@@ -43,7 +43,7 @@ class ContributorViewSet(ModelViewSet):
 
 class IssueViewSet(ModelViewSet):
     serializer_class = IssueSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
 
     def get_queryset(self):
         project = Project.objects.get(pk=self.kwargs['projects_pk'])
@@ -51,11 +51,12 @@ class IssueViewSet(ModelViewSet):
     
     def perform_create(self, serializer):
         project = Project.objects.get(pk=self.kwargs['projects_pk'])
+        print(project)
         serializer.save(project=project, author_user=self.request.user)
 
 class CommentViewSet(ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
 
     def get_queryset(self):
         issue = Issue.objects.get(pk=self.kwargs['issues_pk'])

@@ -59,7 +59,7 @@ class Issue(models.Model):
     priority = models.CharField(max_length=50, choices=PRIORITY)
     status = models.CharField(max_length=50, choices=STATUS)
     author_user = models.ForeignKey(User, related_name="issue_author", on_delete=models.CASCADE)
-    assigned_user = models.ForeignKey(User, related_name="issue_assigned",default=author_user, on_delete=models.CASCADE)
+    assigned_user = models.ForeignKey(User, related_name="issue_assigned", on_delete=models.CASCADE)
     created_time = models.DateTimeField(auto_now_add=True)
 
 class Comment(models.Model):
