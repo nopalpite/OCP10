@@ -1,15 +1,9 @@
-from django.contrib.auth.models import User
-from rest_framework.generics import CreateAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
-from .serializer import UserSerializer, ContributorSerializer, ProjectSerializer, IssueSerializer, CommentSerializer
-from .models import Project, Contributor, Issue, Comment
+from .serializer import ContributorSerializer, ProjectSerializer, IssueSerializer, CommentSerializer
+from .models import Project, Contributor, Issue
 from .permissions import IsProjectAuthorOrReadOnly, IsContributorAuthorOrReadOnly, IsAuthorOrReadOnly
 
-
-class SignupView(CreateAPIView):
-    serializer_class = UserSerializer
-    permission_classes = [AllowAny]    
 
 class ProjectViewSet(ModelViewSet):
     serializer_class = ProjectSerializer

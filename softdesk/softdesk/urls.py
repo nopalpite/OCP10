@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework_nested import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from api.views import ProjectViewSet, ContributorViewSet, IssueViewSet, CommentViewSet, SignupView
+from api.views import ProjectViewSet, ContributorViewSet, IssueViewSet, CommentViewSet
+from authentication.views import SignupView
 
 router = routers.DefaultRouter()
 router.register(r'projects', ProjectViewSet, basename='projects')
