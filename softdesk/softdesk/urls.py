@@ -22,7 +22,6 @@ comment_router = routers.NestedDefaultRouter(
     issue_router, r'issues', lookup='issues')
 comment_router.register(r'comments', CommentViewSet, basename='comments')
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('signup/', SignupView.as_view()),
